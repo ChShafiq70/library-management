@@ -24,9 +24,8 @@ export default function Layout() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-3">
             <span className="text-3xl">℞</span>
-            <span className="text-xl font-bold">The Reading Room</span>
+            <span className="text-xl font-bold">Library</span>
           </div>
-          <span className="text-sm text-gray-500 mt-1 block">Library Registry</span>
         </div>
 
         <nav className="flex-1 p-4">

@@ -13,6 +13,7 @@ export default function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState(null);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -90,10 +91,18 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <span className="text-sm text-gray-500 uppercase tracking-wide">Membership</span>
-        <h1 className="text-3xl font-bold mt-2">All members</h1>
-        <p className="text-gray-600 mt-1">{users.length} account{users.length === 1 ? "" : "s"} on file</p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <span className="text-sm text-gray-500 uppercase tracking-wide">Membership</span>
+          <h1 className="text-3xl font-bold mt-2">All members</h1>
+          <p className="text-gray-600 mt-1">{users.length} account{users.length === 1 ? "" : "s"} on file</p>
+        </div>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          onClick={() => setShowAddUserModal(true)}
+        >
+          + Add User
+        </button>
       </div>
 
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
@@ -148,6 +157,8 @@ export default function UsersPage() {
           </tbody>
         </table>
       )}
+
+      {showAddUserModal && <AddUserModal onClose={() => setShowAddUserModal(false)} onSuccess={load} />}
     </div>
   );
 }
@@ -192,6 +203,122 @@ function BlockByIdCard() {
         <button className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400" disabled={!studentId || loading} onClick={() => runAction("unblock")}>
           Unblock
         </button>
+      </div>
+    </div>
+  );
+}
+
+function AddUserModal({ onClose, onSuccess }) {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+    role: "student",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      await api.post("/users", formData);
+      onSuccess();
+      onClose();
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not create user.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Add New User</h2>
+          <button
+            className="text-gray-500 hover:text-gray-700"
+            onClick={onClose}
+          >
+            ✕
+          </button>
+        </div>
+
+        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
+
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Name</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+              style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Email</label>
+            <input
+              type="email"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="Enter email address"
+              required
+              style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Password</label>
+            <input
+              type="password"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required
+              minLength={6}
+              style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
+            />
+          </div>
+
+          <div className="mb-4">
+            <label className="block text-gray-700 font-medium mb-2">Role</label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-white"
+              value={formData.role}
+              onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+              style={{ color: '#1f2937', backgroundColor: '#ffffff' }}
+            >
+              {ROLE_OPTIONS.map((r) => (
+                <option key={r} value={r}>{r}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex gap-2 justify-end">
+            <button
+              type="button"
+              className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-400"
+              disabled={loading}
+            >
+              {loading ? "Creating..." : "Create User"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

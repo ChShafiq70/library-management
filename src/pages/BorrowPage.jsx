@@ -5,7 +5,7 @@ import Stamp from "../components/Stamp";
 
 export default function BorrowPage() {
   const { role } = useAuth();
-  const [tab, setTab] = useState(role === "student" ? "mine" : "pending");
+  const [tab, setTab] = useState(role === "student" || role === "superadmin" ? "mine" : "pending");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -15,7 +15,7 @@ export default function BorrowPage() {
     setLoading(true);
     setError("");
     try {
-      if (role === "student") {
+      if (role === "student" || role === "superadmin") {
         const { data } = await api.get("/borrow/my-history");
         setRecords(data.data);
       } else {

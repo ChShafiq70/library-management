@@ -8,6 +8,8 @@ const emptyForm = { title: "", author: "", isbn: "", description: "", quantity: 
 export default function BooksPage() {
   const { role, user } = useAuth();
   const isLibrarian = role === "librarian";
+  const isSuperadmin = role === "superadmin";
+  const canManageBooks = isLibrarian || isSuperadmin;
 
   const [books, setBooks] = useState([]);
   const [search, setSearch] = useState("");
@@ -18,6 +20,9 @@ export default function BooksPage() {
   const [form, setForm] = useState(emptyForm);
   const [borrowingId, setBorrowingId] = useState(null);
   const [feedback, setFeedback] = useState("");
+  const [showBorrowModal, setShowBorrowModal] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [borrowQuantity, setBorrowQuantity] = useState(1);
 
   const fetchBooks = async (searchTerm = "") => {
     setLoading(true);
@@ -89,12 +94,20 @@ export default function BooksPage() {
   };
 
   const handleBorrow = async (bookId) => {
-    setBorrowingId(bookId);
+    const book = books.find(b => b.id === bookId);
+    setSelectedBook(book);
+    setBorrowQuantity(1);
+    setShowBorrowModal(true);
+  };
+
+  const confirmBorrow = async () => {
+    setBorrowingId(selectedBook.id);
     setFeedback("");
     setError("");
     try {
-      await api.post("/borrow", { bookId });
-      setFeedback("Request submitted — waiting on librarian approval.");
+      await api.post("/borrow", { bookId: selectedBook.id, quantity: borrowQuantity });
+      setFeedback(`Request submitted for ${borrowQuantity} book(s) — waiting on librarian approval.`);
+      setShowBorrowModal(false);
       fetchBooks(search);
     } catch (err) {
       setError(err.response?.data?.message || "Could not submit borrow request.");
@@ -124,7 +137,7 @@ export default function BooksPage() {
           />
           <button type="submit" className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">Search</button>
         </form>
-        {isLibrarian && (
+        {canManageBooks && (
           <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors" onClick={openCreateForm}>+ Add book</button>
         )}
       </div>
@@ -185,7 +198,7 @@ export default function BooksPage() {
                 label={book.availableQuantity > 0 ? "Available" : "None left"}
                 variant={book.availableQuantity > 0 ? "available" : "unavailable"}
               />
-              {role === "student" && (
+              {(role === "student" || role === "superadmin") && (
                 <button
                   className="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400"
                   disabled={book.availableQuantity < 1 || borrowingId === book.id}
@@ -194,7 +207,7 @@ export default function BooksPage() {
                   {borrowingId === book.id ? "Requesting…" : "Borrow"}
                 </button>
               )}
-              {isLibrarian && (
+              {canManageBooks && (
                 <>
                   <button className="px-3 py-1 border border-gray-300 text-sm rounded-md text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => openEditForm(book)}>Edit</button>
                   <button className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors" onClick={() => handleDelete(book.id)}>Delete</button>
