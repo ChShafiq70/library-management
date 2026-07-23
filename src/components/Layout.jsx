@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 const NAV_ITEMS = [
   { to: "/books", label: "Catalog", roles: ["superadmin", "librarian", "student"] },
   { to: "/borrow", label: "Borrowing Desk", roles: ["superadmin", "librarian", "student"] },
+  { to: "/history", label: "History", roles: ["student"] },
   { to: "/users", label: "Members", roles: ["superadmin", "librarian"] },
 ];
 

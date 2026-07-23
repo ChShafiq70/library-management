@@ -38,9 +38,13 @@ export default function BooksPage() {
   };
 
   useEffect(() => {
-    fetchBooks();
+    const delayDebounceFn = setTimeout(() => {
+      fetchBooks(search);
+    }, 500);
+
+    return () => clearTimeout(delayDebounceFn);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [search]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -216,6 +220,43 @@ export default function BooksPage() {
             </div>
           </div>
         ))
+      )}
+
+      {showBorrowModal && selectedBook && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white p-6 rounded-lg shadow-xl w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4">Borrow {selectedBook.title}</h3>
+            <div className="mb-4">
+              <label className="block text-gray-700 font-medium mb-2">How many copies?</label>
+              <input
+                type="number"
+                min="1"
+                max={selectedBook.availableQuantity}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={borrowQuantity}
+                onChange={(e) => setBorrowQuantity(e.target.value)}
+              />
+              <p className="text-sm text-gray-500 mt-1">Available: {selectedBook.availableQuantity}</p>
+            </div>
+            <div className="flex gap-2 justify-end">
+              <button
+                type="button"
+                className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors"
+                onClick={() => setShowBorrowModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400"
+                onClick={confirmBorrow}
+                disabled={borrowingId === selectedBook.id || borrowQuantity < 1 || borrowQuantity > selectedBook.availableQuantity}
+              >
+                {borrowingId === selectedBook.id ? "Requesting…" : "Confirm Borrow"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -5,7 +5,7 @@ import Stamp from "../components/Stamp";
 
 export default function BorrowPage() {
   const { role } = useAuth();
-  const [tab, setTab] = useState(role === "student" || role === "superadmin" ? "mine" : "pending");
+  const [tab, setTab] = useState(role === "student" ? "mine" : "pending");
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -15,7 +15,7 @@ export default function BorrowPage() {
     setLoading(true);
     setError("");
     try {
-      if (role === "student" || role === "superadmin") {
+      if (role === "student") {
         const { data } = await api.get("/borrow/my-history");
         setRecords(data.data);
       } else {
@@ -60,8 +60,22 @@ export default function BorrowPage() {
     }
   };
 
+  const handleCancel = async (id) => {
+    if (!window.confirm("Are you sure you want to cancel this borrow request?")) return;
+    setBusyId(id);
+    setError("");
+    try {
+      await api.patch(`/borrow/${id}/cancel`);
+      load();
+    } catch (err) {
+      setError(err.response?.data?.message || "Could not cancel this request.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   const visibleRecords =
-    role === "librarian" && tab === "pending"
+    (role === "librarian" || role === "superadmin") && tab === "pending"
       ? records.filter((r) => r.status === "pending")
       : records;
 
@@ -79,7 +93,7 @@ export default function BorrowPage() {
 
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
 
-      {role === "librarian" && (
+      {(role === "librarian" || role === "superadmin") && (
         <div className="flex gap-2 mb-6">
           <button 
             className={`px-4 py-2 rounded-md transition-colors ${
@@ -117,7 +131,7 @@ export default function BorrowPage() {
         visibleRecords.map((record) => (
           <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center gap-4" key={record.id}>
             <div className="flex-1">
-              <div className="text-lg font-semibold">{record.book?.title}</div>
+              <div className="text-lg font-semibold">{record.book?.title} <span className="text-sm font-normal text-gray-500">({record.quantity} copies)</span></div>
               <div className="text-gray-600">
                 {role !== "student" && record.borrower ? `${record.borrower.name} · ` : ""}
                 {record.book?.author}
@@ -130,7 +144,7 @@ export default function BorrowPage() {
             </div>
             <div className="flex items-center gap-2">
               <Stamp label={record.status} variant={record.status} />
-              {role === "librarian" && record.status === "pending" && (
+              {(role === "librarian" || role === "superadmin") && record.status === "pending" && (
                 <>
                   <button
                     className="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400"
@@ -149,7 +163,7 @@ export default function BorrowPage() {
                 </>
               )}
               {record.status === "approved" &&
-                (role === "librarian" || role === "student") && (
+                (role === "librarian" || role === "superadmin" || role === "student") && (
                   <button
                     className="px-3 py-1 border border-gray-300 text-sm rounded-md text-gray-700 hover:bg-gray-50 transition-colors disabled:bg-gray-400"
                     disabled={busyId === record.id}
@@ -158,6 +172,15 @@ export default function BorrowPage() {
                     {busyId === record.id ? "Returning…" : "Mark returned"}
                   </button>
                 )}
+              {record.status === "pending" && role === "student" && (
+                <button
+                  className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-400"
+                  disabled={busyId === record.id}
+                  onClick={() => handleCancel(record.id)}
+                >
+                  {busyId === record.id ? "Canceling…" : "Cancel Request"}
+                </button>
+              )}
             </div>
           </div>
         ))
