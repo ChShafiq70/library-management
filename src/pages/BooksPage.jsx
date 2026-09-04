@@ -123,8 +123,8 @@ export default function BooksPage() {
   return (
     <div>
       <div className="mb-8">
-        <span className="text-sm text-gray-500 uppercase tracking-wide">Card catalog</span>
-        <h1 className="text-3xl font-bold mt-2">Browse the collection</h1>
+        <span className="text-sm text-gray-500 uppercase tracking-wide">Card catalogs</span>
+        <h1 className="text-3xl font-bold mt-2">Browse the collections</h1>
         <p className="text-gray-600 mt-1">{books.length} title{books.length === 1 ? "" : "s"} on record</p>
       </div>
 
