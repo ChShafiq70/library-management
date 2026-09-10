@@ -131,18 +131,18 @@ export default function BooksPage() {
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
       {feedback && <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">{feedback}</div>}
 
-      <div className="flex gap-4 mb-6">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <form onSubmit={handleSearch} className="flex gap-2 flex-1">
           <input
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Search by title or author…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <button type="submit" className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors">Search</button>
+          <button type="submit" className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap">Search</button>
         </form>
         {canManageBooks && (
-          <button className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors" onClick={openCreateForm}>+ Add book</button>
+          <button className="px-3 sm:px-4 py-2 text-sm sm:text-base bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors whitespace-nowrap" onClick={openCreateForm}>+ Add book</button>
         )}
       </div>
 
