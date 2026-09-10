@@ -189,34 +189,36 @@ export default function BooksPage() {
         </div>
       ) : (
         books.map((book) => (
-          <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center gap-4" key={book.id}>
-            <div className="flex-1">
-              <div className="text-lg font-semibold">{book.title}</div>
-              <div className="text-gray-600">{book.author}</div>
-              <div className="text-sm text-gray-500 mt-1">
-                ISBN {book.isbn} · {book.availableQuantity}/{book.quantity} available
+          <div className="bg-white p-4 rounded-lg shadow-md mb-4" key={book.id}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-base sm:text-lg font-semibold truncate">{book.title}</div>
+                <div className="text-gray-600 text-sm sm:text-base truncate">{book.author}</div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                  ISBN {book.isbn} · {book.availableQuantity}/{book.quantity} available
+                </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Stamp
-                label={book.availableQuantity > 0 ? "Available" : "None left"}
-                variant={book.availableQuantity > 0 ? "available" : "unavailable"}
-              />
-              {(role === "student" || role === "superadmin") && (
-                <button
-                  className="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400"
-                  disabled={book.availableQuantity < 1 || borrowingId === book.id}
-                  onClick={() => handleBorrow(book.id)}
-                >
-                  {borrowingId === book.id ? "Requesting…" : "Borrow"}
-                </button>
-              )}
-              {canManageBooks && (
-                <>
-                  <button className="px-3 py-1 border border-gray-300 text-sm rounded-md text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => openEditForm(book)}>Edit</button>
-                  <button className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors" onClick={() => handleDelete(book.id)}>Delete</button>
-                </>
-              )}
+              <div className="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+                <Stamp
+                  label={book.availableQuantity > 0 ? "Available" : "None left"}
+                  variant={book.availableQuantity > 0 ? "available" : "unavailable"}
+                />
+                {(role === "student" || role === "superadmin") && (
+                  <button
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400 whitespace-nowrap"
+                    disabled={book.availableQuantity < 1 || borrowingId === book.id}
+                    onClick={() => handleBorrow(book.id)}
+                  >
+                    {borrowingId === book.id ? "Requesting…" : "Borrow"}
+                  </button>
+                )}
+                {canManageBooks && (
+                  <>
+                    <button className="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors whitespace-nowrap" onClick={() => openEditForm(book)}>Edit</button>
+                    <button className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors whitespace-nowrap" onClick={() => handleDelete(book.id)}>Delete</button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         ))
