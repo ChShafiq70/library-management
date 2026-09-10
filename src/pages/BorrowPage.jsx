@@ -94,23 +94,23 @@ export default function BorrowPage() {
       {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">{error}</div>}
 
       {(role === "librarian" || role === "superadmin") && (
-        <div className="flex gap-2 mb-6">
-          <button 
-            className={`px-4 py-2 rounded-md transition-colors ${
-              tab === "pending" 
-                ? "bg-blue-500 text-white" 
+        <div className="flex flex-wrap gap-2 mb-6">
+          <button
+            className={`px-3 sm:px-4 py-2 text-sm sm:text-base rounded-md transition-colors ${
+              tab === "pending"
+                ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`} 
+            }`}
             onClick={() => setTab("pending")}
           >
             Pending requests
           </button>
-          <button 
-            className={`px-4 py-2 rounded-md transition-colors ${
-              tab === "all" 
-                ? "bg-blue-500 text-white" 
+          <button
+            className={`px-3 sm:px-4 py-2 text-sm sm:text-base rounded-md transition-colors ${
+              tab === "all"
+                ? "bg-blue-500 text-white"
                 : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`} 
+            }`}
             onClick={() => setTab("all")}
           >
             All records
