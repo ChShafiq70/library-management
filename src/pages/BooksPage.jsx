@@ -147,35 +147,35 @@ export default function BooksPage() {
       </div>
 
       {showForm && (
-        <form className="bg-white p-6 rounded-lg shadow-md mb-6" onSubmit={handleFormSubmit}>
-          <h3 className="text-xl font-semibold mb-4">{editingId ? "Edit title" : "New title"}</h3>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+        <form className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-6" onSubmit={handleFormSubmit}>
+          <h3 className="text-lg sm:text-xl font-semibold mb-4">{editingId ? "Edit title" : "New title"}</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Title</label>
-              <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="title" value={form.title} onChange={handleFormChange} required />
+              <label className="block text-gray-700 font-medium mb-2 text-sm">Title</label>
+              <input className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="title" value={form.title} onChange={handleFormChange} required />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Author</label>
-              <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="author" value={form.author} onChange={handleFormChange} required />
+              <label className="block text-gray-700 font-medium mb-2 text-sm">Author</label>
+              <input className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="author" value={form.author} onChange={handleFormChange} required />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             <div>
-              <label className="block text-gray-700 font-medium mb-2">ISBN</label>
-              <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="isbn" value={form.isbn} onChange={handleFormChange} required />
+              <label className="block text-gray-700 font-medium mb-2 text-sm">ISBN</label>
+              <input className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="isbn" value={form.isbn} onChange={handleFormChange} required />
             </div>
             <div>
-              <label className="block text-gray-700 font-medium mb-2">Copies</label>
-              <input className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" type="number" min="0" name="quantity" value={form.quantity} onChange={handleFormChange} required />
+              <label className="block text-gray-700 font-medium mb-2 text-sm">Copies</label>
+              <input className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" type="number" min="0" name="quantity" value={form.quantity} onChange={handleFormChange} required />
             </div>
           </div>
           <div className="mb-4">
-            <label className="block text-gray-700 font-medium mb-2">Description</label>
-            <textarea className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="description" rows={3} value={form.description} onChange={handleFormChange} />
+            <label className="block text-gray-700 font-medium mb-2 text-sm">Description</label>
+            <textarea className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" name="description" rows={3} value={form.description} onChange={handleFormChange} />
           </div>
-          <div className="flex gap-2">
-            <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">{editingId ? "Save changes" : "Add to catalog"}</button>
-            <button type="button" className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowForm(false)}>Cancel</button>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <button type="submit" className="px-4 py-2 text-sm bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">{editingId ? "Save changes" : "Add to catalog"}</button>
+            <button type="button" className="px-4 py-2 text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors" onClick={() => setShowForm(false)}>Cancel</button>
           </div>
         </form>
       )}
