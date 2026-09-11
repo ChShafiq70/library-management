@@ -52,21 +52,26 @@ export default function HistoryPage() {
         </div>
       ) : (
         records.map((record) => (
-          <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center gap-4" key={record.id}>
-            <div className="flex-1">
-              <div className="text-lg font-semibold">{record.book?.title} <span className="text-sm font-normal text-gray-500">({record.quantity} copies)</span></div>
-              <div className="text-gray-600">
-                {role !== "student" && record.borrower ? `${record.borrower.name} · ` : ""}
-                {record.book?.author}
+          <div className="bg-white p-4 rounded-lg shadow-md mb-4" key={record.id}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-base sm:text-lg font-semibold">
+                  <span className="truncate block">{record.book?.title}</span>
+                  <span className="text-xs sm:text-sm font-normal text-gray-500">({record.quantity} copies)</span>
+                </div>
+                <div className="text-gray-600 text-sm truncate">
+                  {role !== "student" && record.borrower ? `${record.borrower.name} · ` : ""}
+                  {record.book?.author}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                  {record.dueDate
+                    ? `Due ${new Date(record.dueDate).toLocaleDateString()}`
+                    : "Awaiting approval"}
+                </div>
               </div>
-              <div className="text-sm text-gray-500 mt-1">
-                {record.dueDate
-                  ? `Due ${new Date(record.dueDate).toLocaleDateString()}`
-                  : "Awaiting approval"}
+              <div className="flex items-center gap-2 justify-start sm:justify-end">
+                <Stamp label={record.status} variant={record.status} />
               </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Stamp label={record.status} variant={record.status} />
             </div>
           </div>
         ))

@@ -91,14 +91,14 @@ export default function UsersPage() {
 
   return (
     <div>
-      <div className="mb-8 flex justify-between items-center">
+      <div className="mb-8 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
         <div>
           <span className="text-sm text-gray-500 uppercase tracking-wide">Membership</span>
-          <h1 className="text-3xl font-bold mt-2">All members</h1>
-          <p className="text-gray-600 mt-1">{users.length} account{users.length === 1 ? "" : "s"} on file</p>
+          <h1 className="text-2xl sm:text-3xl font-bold mt-2">All members</h1>
+          <p className="text-gray-600 mt-1 text-sm sm:text-base">{users.length} account{users.length === 1 ? "" : "s"} on file</p>
         </div>
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+          className="px-3 sm:px-4 py-2 text-sm sm:text-base bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors whitespace-nowrap"
           onClick={() => setShowAddUserModal(true)}
         >
           + Add User
@@ -110,24 +110,71 @@ export default function UsersPage() {
       {loading ? (
         <p className="text-gray-500">Pulling member files…</p>
       ) : (
-        <table className="w-full bg-white rounded-lg shadow-md overflow-hidden">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
-              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
-              <th className="px-4 py-3"></th>
-            </tr>
-          </thead>
-          <tbody>
+        <>
+          <div className="hidden sm:block bg-white rounded-lg shadow-md overflow-hidden">
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Name</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Email</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Role</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Status</th>
+                  <th className="px-4 py-3"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((u) => (
+                  <tr key={u.id} className="border-t border-gray-200">
+                    <td className="px-4 py-3 text-sm">{u.name}{u.id === me?.id ? " (you)" : ""}</td>
+                    <td className="px-4 py-3 text-sm">{u.email}</td>
+                    <td className="px-4 py-3">
+                      <select
+                        className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        value={u.role?.name}
+                        disabled={busyId === u.id || u.id === me?.id}
+                        onChange={(e) => handleRoleChange(u.id, e.target.value)}
+                      >
+                        {ROLE_OPTIONS.map((r) => (
+                          <option key={r} value={r}>{r}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-2 flex-wrap">
+                        <Stamp label={u.isActive ? "active" : "inactive"} variant={u.isActive ? "available" : "blocked"} />
+                        {u.isBlocked && <Stamp label="blocked" variant="blocked" />}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <button
+                        className="px-3 py-1 text-xs sm:text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors disabled:bg-gray-400 whitespace-nowrap"
+                        disabled={busyId === u.id || u.id === me?.id}
+                        onClick={() => handleActiveToggle(u)}
+                      >
+                        {u.isActive ? "Deactivate" : "Activate"}
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="sm:hidden space-y-3">
             {users.map((u) => (
-              <tr key={u.id} className="border-t border-gray-200">
-                <td className="px-4 py-3">{u.name}{u.id === me?.id ? " (you)" : ""}</td>
-                <td className="px-4 py-3">{u.email}</td>
-                <td className="px-4 py-3">
+              <div key={u.id} className="bg-white p-4 rounded-lg shadow-md">
+                <div className="mb-3">
+                  <div className="font-semibold text-sm">{u.name}{u.id === me?.id ? " (you)" : ""}</div>
+                  <div className="text-xs text-gray-600 truncate">{u.email}</div>
+                </div>
+                <div className="flex gap-2 flex-wrap mb-3">
+                  <Stamp label={u.isActive ? "active" : "inactive"} variant={u.isActive ? "available" : "blocked"} />
+                  {u.isBlocked && <Stamp label="blocked" variant="blocked" />}
+                </div>
+                <div className="mb-3">
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Role</label>
                   <select
-                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-2 py-1 text-xs border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={u.role?.name}
                     disabled={busyId === u.id || u.id === me?.id}
                     onChange={(e) => handleRoleChange(u.id, e.target.value)}
@@ -136,26 +183,18 @@ export default function UsersPage() {
                       <option key={r} value={r}>{r}</option>
                     ))}
                   </select>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex gap-2 flex-wrap">
-                    <Stamp label={u.isActive ? "active" : "inactive"} variant={u.isActive ? "available" : "blocked"} />
-                    {u.isBlocked && <Stamp label="blocked" variant="blocked" />}
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <button
-                    className="px-3 py-1 border border-gray-300 text-sm rounded-md text-gray-700 hover:bg-gray-50 transition-colors disabled:bg-gray-400"
-                    disabled={busyId === u.id || u.id === me?.id}
-                    onClick={() => handleActiveToggle(u)}
-                  >
-                    {u.isActive ? "Deactivate" : "Activate"}
-                  </button>
-                </td>
-              </tr>
+                </div>
+                <button
+                  className="w-full px-3 py-1 text-xs border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors disabled:bg-gray-400"
+                  disabled={busyId === u.id || u.id === me?.id}
+                  onClick={() => handleActiveToggle(u)}
+                >
+                  {u.isActive ? "Deactivate" : "Activate"}
+                </button>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        </>
       )}
 
       {showAddUserModal && <AddUserModal onClose={() => setShowAddUserModal(false)} onSuccess={load} />}
