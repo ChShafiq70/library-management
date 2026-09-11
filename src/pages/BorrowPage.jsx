@@ -129,58 +129,63 @@ export default function BorrowPage() {
         </div>
       ) : (
         visibleRecords.map((record) => (
-          <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex items-center gap-4" key={record.id}>
-            <div className="flex-1">
-              <div className="text-lg font-semibold">{record.book?.title} <span className="text-sm font-normal text-gray-500">({record.quantity} copies)</span></div>
-              <div className="text-gray-600">
-                {role !== "student" && record.borrower ? `${record.borrower.name} · ` : ""}
-                {record.book?.author}
+          <div className="bg-white p-4 rounded-lg shadow-md mb-4" key={record.id}>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:gap-4 gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-base sm:text-lg font-semibold">
+                  <span className="truncate block">{record.book?.title}</span>
+                  <span className="text-xs sm:text-sm font-normal text-gray-500">({record.quantity} copies)</span>
+                </div>
+                <div className="text-gray-600 text-sm truncate">
+                  {role !== "student" && record.borrower ? `${record.borrower.name} · ` : ""}
+                  {record.book?.author}
+                </div>
+                <div className="text-xs sm:text-sm text-gray-500 mt-1">
+                  {record.dueDate
+                    ? `Due ${new Date(record.dueDate).toLocaleDateString()}`
+                    : "Awaiting approval"}
+                </div>
               </div>
-              <div className="text-sm text-gray-500 mt-1">
-                {record.dueDate
-                  ? `Due ${new Date(record.dueDate).toLocaleDateString()}`
-                  : "Awaiting approval"}
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <Stamp label={record.status} variant={record.status} />
-              {(role === "librarian" || role === "superadmin") && record.status === "pending" && (
-                <>
+              <div className="flex flex-wrap items-center gap-2 justify-start sm:justify-end">
+                <Stamp label={record.status} variant={record.status} />
+                {(role === "librarian" || role === "superadmin") && record.status === "pending" && (
+                  <>
+                    <button
+                      className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400 whitespace-nowrap"
+                      disabled={busyId === record.id}
+                      onClick={() => handleDecision(record.id, "approved")}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-400 whitespace-nowrap"
+                      disabled={busyId === record.id}
+                      onClick={() => handleDecision(record.id, "rejected")}
+                    >
+                      Reject
+                    </button>
+                  </>
+                )}
+                {record.status === "approved" &&
+                  (role === "librarian" || role === "superadmin" || role === "student") && (
+                    <button
+                      className="px-2 sm:px-3 py-1 text-xs sm:text-sm border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-colors disabled:bg-gray-400 whitespace-nowrap"
+                      disabled={busyId === record.id}
+                      onClick={() => handleReturn(record.id)}
+                    >
+                      {busyId === record.id ? "Returning…" : "Mark returned"}
+                    </button>
+                  )}
+                {record.status === "pending" && role === "student" && (
                   <button
-                    className="px-3 py-1 bg-green-500 text-white text-sm rounded-md hover:bg-green-600 transition-colors disabled:bg-gray-400"
+                    className="px-2 sm:px-3 py-1 text-xs sm:text-sm bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-400 whitespace-nowrap"
                     disabled={busyId === record.id}
-                    onClick={() => handleDecision(record.id, "approved")}
+                    onClick={() => handleCancel(record.id)}
                   >
-                    Approve
-                  </button>
-                  <button
-                    className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-400"
-                    disabled={busyId === record.id}
-                    onClick={() => handleDecision(record.id, "rejected")}
-                  >
-                    Reject
-                  </button>
-                </>
-              )}
-              {record.status === "approved" &&
-                (role === "librarian" || role === "superadmin" || role === "student") && (
-                  <button
-                    className="px-3 py-1 border border-gray-300 text-sm rounded-md text-gray-700 hover:bg-gray-50 transition-colors disabled:bg-gray-400"
-                    disabled={busyId === record.id}
-                    onClick={() => handleReturn(record.id)}
-                  >
-                    {busyId === record.id ? "Returning…" : "Mark returned"}
+                    {busyId === record.id ? "Canceling…" : "Cancel Request"}
                   </button>
                 )}
-              {record.status === "pending" && role === "student" && (
-                <button
-                  className="px-3 py-1 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition-colors disabled:bg-gray-400"
-                  disabled={busyId === record.id}
-                  onClick={() => handleCancel(record.id)}
-                >
-                  {busyId === record.id ? "Canceling…" : "Cancel Request"}
-                </button>
-              )}
+              </div>
             </div>
           </div>
         ))
