@@ -29,7 +29,23 @@ export default function LoginPage() {
     <main className="min-h-screen min-h-[100dvh] flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-6 sm:py-12">
       <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-md sm:p-8">
         <div className="mb-8 text-center">
-          <span className="text-3xl sm:text-4xl">℞</span>
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-sm">
+            <svg
+              aria-hidden="true"
+              className="h-8 w-8"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 7.5C9.8 5.9 6.7 5.5 3.5 6.4v11.2c3.2-.9 6.3-.5 8.5 1.1m0-11.2c2.2-1.6 5.3-2 8.5-1.1v11.2c-3.2-.9-6.3-.5-8.5 1.1m0-11.2v11.2"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
           <h1 className="mt-2 text-xl font-bold sm:text-2xl">The Reading Room</h1>
         </div>
 
