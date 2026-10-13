@@ -26,14 +26,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      <div className="bg-white p-6 sm:p-8 rounded-lg shadow-md w-full max-w-md">
-        <div className="text-center mb-8">
+    <main className="min-h-screen min-h-[100dvh] flex items-center justify-center bg-gray-100 px-4 py-8 sm:px-6 sm:py-12">
+      <div className="w-full max-w-md rounded-lg bg-white p-5 shadow-md sm:p-8">
+        <div className="mb-8 text-center">
           <span className="text-3xl sm:text-4xl">℞</span>
-          <h1 className="text-xl sm:text-2xl font-bold mt-2">The Reading Room</h1>
+          <h1 className="mt-2 text-xl font-bold sm:text-2xl">The Reading Room</h1>
         </div>
 
-        {error && <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 text-sm">{error}</div>}
+        {error && <div className="mb-4 break-words rounded border border-red-400 bg-red-100 px-4 py-3 text-sm text-red-700" role="alert">{error}</div>}
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -42,11 +42,11 @@ export default function LoginPage() {
               id="email"
               name="email"
               type="email"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoComplete="email"
+              className="min-h-11 w-full min-w-0 rounded-md border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={form.email}
               onChange={handleChange}
               required
-              autoFocus
             />
           </div>
           <div className="mb-6">
@@ -55,21 +55,22 @@ export default function LoginPage() {
               id="password"
               name="password"
               type="password"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              autoComplete="current-password"
+              className="min-h-11 w-full min-w-0 rounded-md border border-gray-300 px-3 py-2 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={form.password}
               onChange={handleChange}
               required
             />
           </div>
-          <button type="submit" className="w-full bg-blue-500 text-white py-2 text-sm rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-400" disabled={loading}>
+          <button type="submit" className="min-h-11 w-full rounded-md bg-blue-500 px-4 py-2 text-sm text-white transition-colors hover:bg-blue-600 disabled:bg-gray-400" disabled={loading}>
             {loading ? "Signing in…" : "Sign in"}
           </button>
         </form>
 
-        <div className="text-center mt-6 text-sm">
+        <div className="mt-6 text-center text-sm">
           New here? <Link to="/register" className="text-blue-500 hover:underline">Register as a student</Link>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
